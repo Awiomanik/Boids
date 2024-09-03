@@ -10,7 +10,7 @@ class Boid():
     def __init__(self, 
                  position: tuple[float, float], 
                  speed: tuple[float, float] = 10,
-                 size: int = 50,
+                 size: int = 25,
                  color: tuple[int, int, int] = (10, 150, 10)) -> None:
         
         self.x, self.y = position
@@ -52,22 +52,24 @@ class Horde():
     def __init__(self) -> None:
         self.boids: list[Boid] = []
     
-    def add_boid(self, position: tuple[int, int], velocity: tuple[int, int]) -> None:
+    def add_boid(self, position: tuple[float, float], velocity: tuple[float, float]) -> None:
         self.boids.append(Boid(position, velocity))
 
     def update(self, 
                separation_factor: float, separation_distance: int,
                alignment_factor: float, alignment_distance: int,
-               cohesion_factor: float) -> None:
+               cohesion_factor: float, edge_factor: int,
+               top_speed: int, bottom_speed: int,
+               edges: tuple[int, int, int, int] = (80, 1840, 80, 1000),
+               margin: int = 50) -> None:
         
         for i, boid in enumerate(self.boids):
-            # Update position of the boid
-            boid.update_pos()
-
             avoidx = avoidy = \
-            vx_avg = vy_avg = counter = \
+            vx_avg = vy_avg = \
+            counter = separation_counter = \
             x_avg = y_avg = \
-            0
+            0.
+
             for j, mate in enumerate(self.boids):
                 # Ommit current boid
                 if i == j:
@@ -77,6 +79,7 @@ class Horde():
                     # Separation
                     avoidx += boid.x - mate.x
                     avoidy += boid.y - mate.y 
+                    separation_counter += 1
             
                 if math.dist((boid.x, boid.y), (mate.x, mate.y)) <= alignment_distance:
                     counter += 1
@@ -102,8 +105,34 @@ class Horde():
                 boid.vx += (x_avg / counter - boid.x) * cohesion_factor
                 boid.vy += (y_avg / counter - boid.y) * cohesion_factor
             
+            # Margin
+            left, right, top, bottom = edges
+            if boid.x < left + margin:
+                boid.vx += edge_factor * ((left + margin) - boid.x)
+            if boid.x > right - margin:
+                boid.vx -= edge_factor * ((right - margin) + boid.x)
+            if boid.y < top + margin:
+                boid.vy += edge_factor * ((top + margin) - boid.y)
+            if boid.y > bottom - margin:
+                boid.vy -= edge_factor * ((bottom - margin) + boid.y)
+                
+            # Speed range
+            speed = math.sqrt(boid.vx**2 +  boid.vy**2) 
+            if speed > top_speed:
+                boid.vx = (boid.vx / speed) * top_speed
+                boid.vy = (boid.vy / speed) * top_speed
+            if 0 < speed < bottom_speed:
+                boid.vx = (boid.vx / speed) * bottom_speed
+                boid.vy = (boid.vy / speed) * bottom_speed
+
+            green = 255 - counter * 4
+            red = separation_counter * 24
+            boid.color = (min(red, 255), max(green, 0), min((255 - green), 255))
 
             # Obsticles
+
+            # Update position of the boid
+            boid.update_pos()
             
     def draw(self, screen: pygame.Surface):
         for boid in self.boids:
