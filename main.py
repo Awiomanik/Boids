@@ -5,7 +5,7 @@ Small script to play with boids algorythms and create some fun visuals.
 import pygame
 import sys
 import random 
-from boids import Boid, Horde
+from boids import Horde
 from input_boxes import InputBox
 
 # Initialize pygame window
@@ -20,6 +20,7 @@ DOTS: tuple[int, int, int] = (150, 10, 10)
 SETTINGS_ICON: pygame.Surface = pygame.image.load("settings_icon.png").convert_alpha()
 CLOSE_ICON: pygame.Surface = pygame.image.load("close_icon.png").convert_alpha()
 SETTINGS_ICON_RECT: pygame.Rect = pygame.Rect(1810, 60, 50, 50)
+FPS = 30
 
 # Utils
 running: bool = True
@@ -30,8 +31,14 @@ horde: Horde = Horde()
 
 # Parameters
 parameters: list[InputBox] = [
-    InputBox(0., 1400, 150, name="test_value"),
-    InputBox(0.05, 1400, 250, name="separation_factor")
+    InputBox(0.02, 1450, 120, name="separation_factor"),
+    InputBox(20, 1450, 220, name="separation_distance"),
+    InputBox(0.05, 1450, 320, name="alignment_factor"),
+    InputBox(100, 1450, 420, name="alignment_distance"),
+    InputBox(0.002, 1450, 520, name="cohesion_factor"),
+    InputBox(0.04, 1450, 620, name="edge_factor"),
+    InputBox(10, 1450, 720, name="top_speed"),
+    InputBox(1, 1450, 820, name="bottom_speed")
 ]
 
 # Mask
@@ -79,9 +86,12 @@ while running:
                     settings = not settings
                 
                 # Add boid
-                else:
+                elif (settings and x < 1450) or not settings:
+                    top_speed = int(parameters[6].val)
                     horde.add_boid((float(x), float(y)), 
-                                   (random.randrange(-2, 2), random.randrange(-2, 2)))
+                                (random.randrange(-top_speed, top_speed), 
+                                 random.randrange(-top_speed, top_speed)))
+
 
             # Right click
             elif event.button == 3:  
@@ -92,7 +102,14 @@ while running:
     screen.blit(mask, (0, 0))
 
     # Update boids
-    horde.update(0.05, 20, 0.005, 40, 0.0005)
+    horde.update(parameters[0].val, 
+                 parameters[1].val, 
+                 parameters[2].val, 
+                 parameters[3].val, 
+                 parameters[4].val,
+                 parameters[5].val,
+                 parameters[6].val,
+                 parameters[7].val)
     
     # Draw boids
     horde.draw(screen)
@@ -111,7 +128,7 @@ while running:
     pygame.display.flip()
     
     # Cap the frame rate
-    clock.tick(60)
+    clock.tick(FPS)
 
 # Quit Pygame
 pygame.quit()
