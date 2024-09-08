@@ -45,7 +45,7 @@ pygame.display.set_caption("BOIDS")
 clock: pygame.time.Clock = pygame.time.Clock()
 TITLE_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 200) 
 BUTTON_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 50)
-INFO_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 30)
+INFO_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 26)
 # Utils - variables
 running: bool = True
 buttons_state: tuple[bool, bool, bool] = [False, False, False]
@@ -84,8 +84,33 @@ button3_txt_rect = button3_txt[0].get_rect(center=button3_rect.center)
 # Info rectangle
 info_rect: pygame.rect = pygame.Rect(SIZE[0] // 6, SIZE[1] // 2 + button1_rect.height, 
                                      2 * SIZE[0] // 3, button1_rect.height)
-info_text = INFO_FONT.render("Hover over buttons for more information.", True, RGB_TXT_ACTIVE)
-info_text_rect = info_text.get_rect(center=info_rect.center)
+def render_multiline_text(text: str) -> pygame.Surface:
+    """Render multiline text centered within a given rectangle."""
+    # Create a temporary surface to render the text
+    surface = pygame.Surface(info_rect.size, pygame.SRCALPHA)
+    surface.fill((0, 0, 0, 0))  # Clear the surface with transparent color
+
+    # Split the text into lines
+    lines = text.split('\n')
+    line_height = INFO_FONT.get_height() + 5
+    total_height = len(lines) * line_height
+    
+    # Calculate the starting Y position to center the text
+    y_offset = (info_rect.height - total_height) // 2
+
+    for line in lines:
+        # Render each line of text
+        rendered_line = INFO_FONT.render(line, True, RGB_BACKGROUND)
+        line_rect = rendered_line.get_rect()
+        x_offset = (info_rect.width - line_rect.width) // 2
+        surface.blit(rendered_line, (x_offset, y_offset))
+        y_offset += line_height 
+
+    return surface
+info_surface_default = render_multiline_text(TXT_DEFAULT)
+info_surface_button1 = render_multiline_text(TXT_BUTTON_1)
+info_surface_button2 = render_multiline_text(TXT_BUTTON_2)
+info_surface_button3 = render_multiline_text(TXT_BUTTON_3)
 
 # Utils - functions
 def draw_buttons(surface: pygame.Surface) -> None:
@@ -96,18 +121,15 @@ def draw_buttons(surface: pygame.Surface) -> None:
     screen.blit(button2_txt[buttons_state[1]], button2_txt_rect)
     screen.blit(button3_txt[buttons_state[2]], button3_txt_rect)
 def update_info_window(screen: pygame.Surface) -> None:
-    if buttons_state[0]:
-        info_text = INFO_FONT.render(TXT_BUTTON_1, True, RGB_TXT_INACTIVE)
-    elif buttons_state[1]:
-        info_text = INFO_FONT.render(TXT_BUTTON_2, True, RGB_TXT_INACTIVE)
-    elif buttons_state[2]:
-        info_text = INFO_FONT.render(TXT_BUTTON_3, True, RGB_TXT_INACTIVE)
-    else:
-        info_text = INFO_FONT.render(TXT_DEFAULT, True, RGB_TXT_INACTIVE)
-    
-    info_text_rect = info_text.get_rect(center=info_rect.center)
     pygame.draw.rect(screen, RGB_RECTANGLE, info_rect, border_radius=100)
-    screen.blit(info_text, info_text_rect)
+    if buttons_state[0]:
+        screen.blit(info_surface_button1, info_rect.topleft)
+    elif buttons_state[1]:
+        screen.blit(info_surface_button2, info_rect.topleft)
+    elif buttons_state[2]:
+        screen.blit(info_surface_button3, info_rect.topleft)
+    else:
+        screen.blit(info_surface_default, info_rect.topleft)
 
 # Main loop
 while running:
