@@ -52,8 +52,13 @@ class Horde():
     def __init__(self) -> None:
         self.boids: list[Boid] = []
     
-    def add_boid(self, position: tuple[float, float], velocity: tuple[float, float]) -> None:
-        self.boids.append(Boid(position, velocity))
+    def add_boid(self, position: tuple[float, float], velocity: tuple[float, float],
+                 size: int = None)-> None:
+        if size:
+            self.boids.append(Boid(position, velocity, size))
+        else:
+            self.boids.append(Boid(position, velocity))
+
 
     def update(self, 
                separation_factor: float, separation_distance: int,
