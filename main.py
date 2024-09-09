@@ -3,12 +3,15 @@ Fun with boids.
 Small script to play with boids algorythms and create some fun visuals.
 """
 
-import pygame
 import sys
+import pygame
+import random
+from boids import Horde
 
 # Constants
 FPS: int = 30
 SIZE: tuple[int, int] = (1280, 720)
+EDGES: tuple[int, int, int, int] = (0, SIZE[0], 0, SIZE[1])
 ROUND_RADIUS: int = 150
 BUTTON_WIDTH, BUTTON_HEIGHT = 240, 100
 
@@ -17,7 +20,7 @@ RGB_TITLE: tuple[int, int, int] = (249, 231, 159)
 """Light yellow"""
 RGB_BACKGROUND: tuple[int, int, int] = (25, 42, 86)
 """Navy blue"""
-RGB_RECTANGLE: tuple[int, int, int, int] = (174, 214, 241, 40)
+RGB_RECTANGLE: tuple[int, int, int, int] = (154, 194, 221, 120)
 """Light pastel blue with transparency"""
 RGB_BUTTON1: tuple[tuple[int, int, int]] = ((70, 171, 112), (88, 214, 141))
 """Soft green"""
@@ -34,9 +37,19 @@ TXT_DEFAULT = \
 """Boids (Bird-oid ojects) is a simulation of flocking behavior in animals like birds or fish.
 It demonstrates how simple rules can create complex group dynamics and emergent behavior.
 Hover over buttons for more information."""
-TXT_BUTTON_1 = "Button 1: Start live simulation of Boids."
-TXT_BUTTON_2 = "Button 2: Generate a GIF of Boids."
-TXT_BUTTON_3 = "Button 3: Exit the application."
+TXT_BUTTON_1 = \
+"""Open a fullscreen window with a live Boids simulation, 
+allowing you to add new boids and adjust parameters 
+to observe changing flocking behavior in real-time.
+(Still in development)"""
+TXT_BUTTON_2 = \
+"""Exit to the console for setting parameters to generate a custom animation of the Boids simulation,
+which will be saved as a .gif file.
+(Still in development)"""
+TXT_BUTTON_3 = \
+"""Exit the appliction.
+(You can always exit or come back to this menu 
+by pressing `ESC` button on the keyboard.)"""
 
 # Initialize pygame window
 pygame.init()
@@ -46,6 +59,7 @@ clock: pygame.time.Clock = pygame.time.Clock()
 TITLE_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 200) 
 BUTTON_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 50)
 INFO_FONT: pygame.font = pygame.font.SysFont("Arial Rounded MT Bold", 26)
+
 # Utils - variables
 running: bool = True
 buttons_state: tuple[bool, bool, bool] = [False, False, False]
@@ -131,6 +145,17 @@ def update_info_window(screen: pygame.Surface) -> None:
     else:
         screen.blit(info_surface_default, info_rect.topleft)
 
+# Initialize Horde of Boids
+horde: Horde = Horde()
+# Initialize Boids
+for i in range(15):
+    coord = (float(random.randint(50, SIZE[0] - 50)), float(random.randint(50, SIZE[1] - 50)))
+    for _ in range(5):
+        horde.add_boid(coord,
+                    (random.randrange(-2, 2), 
+                    random.randrange(-2, 2)),
+                    30)
+        
 # Main loop
 while running:
     # Handle input
@@ -146,11 +171,12 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Left click
             if event.button == 1:  
-                x, y = pygame.mouse.get_pos()
-                pass
-            # Right click
-            elif event.button == 3: 
-                pass
+                if buttons_state[0]:
+                    running = False
+                elif buttons_state[1]:
+                    running = False
+                elif buttons_state[2]:
+                    running = False
         
         # Handle mouse position
         if event.type == pygame.MOUSEMOTION:
@@ -164,15 +190,14 @@ while running:
             else:
                 buttons_state = [False, False, False]
 
-        
-
     # Draw Menu
     screen.fill(RGB_BACKGROUND)
+    horde.update(0.005, 30, 0.02, 100, 0.0005, 0.002, 2, 1, EDGES, 100)
+    horde.draw(screen)
     screen.blit(trans_rect_surface, trans_rect_rect)
     screen.blit(title_surface, title_rect)
     draw_buttons(screen)
     update_info_window(screen)
-
 
     # flip frame    
     pygame.display.flip()
