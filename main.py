@@ -6,6 +6,7 @@ Small script to play with boids algorythms and create some fun visuals.
 import sys
 import pygame
 import random
+import subprocess
 from boids import Horde
 
 # Constants
@@ -40,8 +41,7 @@ Hover over buttons for more information."""
 TXT_BUTTON_1 = \
 """Open a fullscreen window with a live Boids simulation, 
 allowing you to add new boids and adjust parameters 
-to observe changing flocking behavior in real-time.
-(Still in development)"""
+to observe changing flocking behavior in real-time."""
 TXT_BUTTON_2 = \
 """Exit to the console for setting parameters to generate a custom animation of the Boids simulation,
 which will be saved as a .gif file.
@@ -171,8 +171,12 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Left click
             if event.button == 1:  
+                # Live simulation
                 if buttons_state[0]:
-                    running = False
+                    # Quit pygame, run live simulation and close this process
+                    pygame.quit()
+                    subprocess.Popen(["python", "display.py"])
+                    sys.exit()
                 elif buttons_state[1]:
                     running = False
                 elif buttons_state[2]:
@@ -203,7 +207,7 @@ while running:
     pygame.display.flip()
     clock.tick(FPS)
 
-# Quit Pygame
+# Quit Pygame and end programm
 pygame.quit()
 sys.exit()
 
