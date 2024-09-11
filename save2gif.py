@@ -2,13 +2,18 @@
 Fun with boids.
 Small script to play with boids algorythms and create some fun visuals.
 """
-
-import sys
 import pygame
+import sys
 import random 
-import subprocess
 from boids import Horde
 from input_boxes import InputBox
+
+# gif
+from PIL import Image
+frames = []
+frame_duration = 40
+animation_duration = 10
+animation_duration *= 33
 
 # Initialize pygame window
 pygame.init()
@@ -61,8 +66,20 @@ def create_mask(dot_radius: int = 15, spacing: int = 40):
 
 mask = create_mask()
 
+for i in range(3):
+    coord = (float(random.randint(100, 1800)), float(random.randint(100, 900)))
+    for _ in range(500):
+        horde.add_boid(coord,
+                    (random.randrange(-2, 2), 
+                    random.randrange(-2, 2)))
+print(len(horde.boids))
+
 # Main loop
 while running:
+    if len(frames) > animation_duration:
+        running = False
+    print(len(frames), '/', animation_duration)
+
     # Handle input
     for event in pygame.event.get():
         # Handle closing the window
@@ -88,16 +105,18 @@ while running:
                     settings = not settings
                 
                 # Add boid
-                elif (settings and x < 1450) or not settings:
-                    top_speed = int(parameters[6].val)
-                    for _ in range(20):
-                        horde.add_boid((float(x), float(y)), 
-                                    (random.randrange(-top_speed, top_speed), 
-                                    random.randrange(-top_speed, top_speed)))
+                #elif (settings and x < 1450) or not settings:
+                #    top_speed = int(parameters[6].val)
+                #    for _ in range(200):
+                #        horde.add_boid((float(x), float(y)), 
+                #                    (random.randrange(-top_speed, top_speed), 
+                #                    random.randrange(-top_speed, top_speed)))
+                #    print(len(horde.boids))
+
 
             # Right click
             elif event.button == 3:  
-                # Add barrier or predator
+                # Add barrier
                 pass
 
     # Draw background
@@ -105,36 +124,44 @@ while running:
 
     # Update boids
     horde.update(parameters[0].val, 
-                parameters[1].val, 
-                parameters[2].val, 
-                parameters[3].val, 
-                parameters[4].val,
-                parameters[5].val,
-                parameters[6].val,
-                parameters[7].val)
+                 parameters[1].val, 
+                 parameters[2].val, 
+                 parameters[3].val, 
+                 parameters[4].val,
+                 parameters[5].val,
+                 parameters[6].val,
+                 parameters[7].val)
     
     # Draw boids
     horde.draw(screen)
 
     # Draw parameters
-    if settings:
-        # draw icon
-        screen.blit(CLOSE_ICON, SETTINGS_ICON_RECT)
-        # draw boxes
-        for box in parameters:
-            box.draw(screen)
-    else:
-        screen.blit(SETTINGS_ICON, SETTINGS_ICON_RECT)
+    #if settings:
+    #    # draw icon
+    #    screen.blit(CLOSE_ICON, SETTINGS_ICON_RECT)
+    #    # draw boxes
+    #    for box in parameters:
+    #        box.draw(screen)
+    #else:
+    #    screen.blit(SETTINGS_ICON, SETTINGS_ICON_RECT)
 
     # Update the display
-    pygame.display.flip()
+    #pygame.display.flip()
 
+    frame_surface = pygame.display.get_surface().copy().subsurface((75, 75, 1770, 930))
+    frame_image = pygame.image.tostring(frame_surface, 'RGB')
+    frame_image = Image.frombytes('RGB', frame_surface.get_size(), frame_image).resize((1280, 720))
+    frames.append(frame_image)
+
+    
     # Cap the frame rate
-    clock.tick(FPS)
+    #clock.tick(FPS)
 
-# Quit Pygame, go back to main script and end process
+if frames:
+    print("Creating gif...")
+    frames[0].save(f"{len(horde.boids)}_boids_animation.gif", save_all=True, append_images=frames[1:], duration=frame_duration, loop=0)
+
+# Quit Pygame
 pygame.quit()
-subprocess.Popen(["python", "main.py"])
 sys.exit()
-
 
