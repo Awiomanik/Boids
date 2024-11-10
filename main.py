@@ -7,7 +7,7 @@ import sys
 import pygame
 import random
 import subprocess
-from boids import Horde
+from Utils.boids import Horde
 
 # Constants
 FPS: int = 30
@@ -44,8 +44,7 @@ allowing you to add new boids and adjust parameters
 to observe changing flocking behavior in real-time."""
 TXT_BUTTON_2 = \
 """Exit to the console for setting parameters to generate a custom animation of the Boids simulation,
-which will be saved as a .gif file.
-(Still in development)"""
+which will be saved as a .gif file."""
 TXT_BUTTON_3 = \
 """Exit the appliction.
 (You can always exit or come back to this menu 
@@ -175,9 +174,13 @@ while running:
                 if buttons_state[0]:
                     # Quit pygame, run live simulation and close this process
                     pygame.quit()
-                    subprocess.Popen(["python", "display.py"])
+                    subprocess.Popen(["python", "Utils//display.py"])
                     sys.exit()
                 elif buttons_state[1]:
+                    # Quit pygame, run live simulation and close this process
+                    pygame.quit()
+                    subprocess.Popen(["python", "Utils//save2gif.py"])
+                    sys.exit()               
                     running = False
                 elif buttons_state[2]:
                     running = False
