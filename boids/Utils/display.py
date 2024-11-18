@@ -13,8 +13,8 @@ def display():
     # Constants
     BLACK: tuple[int, int, int] = (30, 30, 30)
     DOTS: tuple[int, int, int] = (150, 10, 10)
-    SETTINGS_ICON: pygame.Surface = pygame.image.load("Utils//GFX//settings_icon.png").convert_alpha()
-    CLOSE_ICON: pygame.Surface = pygame.image.load("Utils//GFX//close_icon.png").convert_alpha()
+    SETTINGS_ICON: pygame.Surface = pygame.image.load("boids/Utils/GFX/settings_icon.png").convert_alpha()
+    CLOSE_ICON: pygame.Surface = pygame.image.load("boids/Utils/GFX/close_icon.png").convert_alpha()
     SETTINGS_ICON_RECT: pygame.Rect = pygame.Rect(1810, 60, 50, 50)
     FPS = 30
 

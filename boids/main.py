@@ -147,13 +147,13 @@ def main():
     # Initialize Horde of Boids
     horde: Horde = Horde()
     # Initialize Boids
-    for _ in range(15):
+    for _ in range(5):
         coord = (float(random.randint(50, SIZE[0] - 50)), float(random.randint(50, SIZE[1] - 50)))
-        for _ in range(5):
+        for _ in range(30):
             horde.add_boid(coord,
                         (random.randrange(-2, 2), 
                         random.randrange(-2, 2)),
-                        30)
+                        60)
             
     # Main loop
     while running:
@@ -196,7 +196,7 @@ def main():
 
         # Draw Menu
         screen.fill(RGB_BACKGROUND)
-        horde.update(0.005, 30, 0.02, 100, 0.0005, 0.002, 2, 1, EDGES, 100)
+        horde.update(0.0035, 60, 0.06, 90, 0.0005, 0.0045, 15, 5, EDGES, 250)
         horde.draw(screen)
         screen.blit(trans_rect_surface, trans_rect_rect)
         screen.blit(title_surface, title_rect)
