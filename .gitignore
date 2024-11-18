@@ -1,6 +1,9 @@
 # Animations and graphics
 *.png
 *.gif
+# Un-ignore PNG and GIF files in folders named GFX
+!*/GFX/*.png
+!*/GFX/*.gif
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
