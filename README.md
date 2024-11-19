@@ -18,6 +18,7 @@ poetry run python main.py
 ## Dependencies
 - `pygame`
 - `numpy`
+- `pillow`
 
 ## Project tree
 
