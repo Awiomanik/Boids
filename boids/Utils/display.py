@@ -3,7 +3,40 @@ import random
 from .boids import Horde
 from boids.Utils.input_boxes import InputBox
 
-def display():
+def display() -> None:
+    """
+    Displays a full-screen interactive simulation of boids with customizable parameters.
+
+    The `display` function initializes a Pygame window, manages user interactions, and renders
+    boids in real time. Users can interact with the simulation by adjusting parameters using input boxes,
+    toggling settings mode, and adding new boids with mouse clicks.
+
+    Features:
+    - Full-screen rendering with an overlay mask for aesthetics.
+    - Adjustable boid simulation parameters, such as separation, alignment, cohesion, and speed.
+    - Interactive interface with toggleable settings and the ability to add boids dynamically.
+
+    Usage:
+        Call `display()` to start the simulation. Use the following interactions:
+        - Left-click on the simulation area to add boids.
+        - Click the settings icon to toggle the parameter adjustment interface.
+        - Right-click (future functionality) to add barriers or predators.
+        - Press `ESC` or close the window to exit the simulation.
+
+    Dependencies:
+        - Pygame: For rendering and interaction.
+        - boids.Horde: Manages the boid simulation logic.
+        - boids.Utils.input_boxes.InputBox: Handles adjustable input parameters.
+
+    Notes:
+        - Requires the following resources:
+          - `boids/Utils/GFX/settings_icon.png`: Icon for opening the settings menu.
+          - `boids/Utils/GFX/close_icon.png`: Icon for closing the settings menu.
+
+    Example:
+        from boids.Utils.display import display
+        display()
+    """
     # Initialize pygame window
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)

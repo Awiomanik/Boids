@@ -1,10 +1,27 @@
 """
-Fun with boids.
-Small script to play with boids algorythms and create some fun visuals.
+Boids Main Menu
+
+This script provides the main menu for interacting with the Boids simulation. It allows users to 
+navigate between different functionalities, including:
+
+1. Running a live simulation with real-time adjustments.
+2. Configuring and generating a custom animation saved as a GIF file.
+3. Exiting the application.
+
+The menu includes interactive buttons with hover effects and detailed information about each option.
+A dynamic visual of boids is rendered in the background for aesthetic purposes.
+
+Dependencies:
+- `pygame`: For rendering the menu and handling user interactions.
+- `boids.Utils.boids.Horde`: To render and simulate boids in the background.
+
+Usage:
+Run this script to display the main menu and choose an action.
 """
 
 import pygame
 import random
+from typing import Optional
 from .Utils.boids import Horde
 
 # Constants
@@ -48,7 +65,46 @@ TXT_BUTTON_3 = \
 (You can always exit or come back to this menu 
 by pressing `ESC` button on the keyboard.)"""
 
-def main():
+def main() -> Optional[str]:
+    """
+    Displays the main menu for the Boids simulation.
+
+    The `main` function initializes a Pygame window and displays an interactive menu with three options:
+    1. Live Simulation: Opens a fullscreen simulation of boids with adjustable parameters.
+    2. Generate GIF: Allows the user to configure parameters for generating a boids animation as a GIF file.
+    3. Quit: Exits the application.
+
+    The menu features a dynamic background with boids rendered in real-time and interactive buttons 
+    with hover effects. Informative text is displayed for each option when the user hovers over the buttons.
+
+    Returns:
+        Optional[str]: 
+        - `"display"` if the user selects the live simulation.
+        - `"save2gif"` if the user selects the GIF generation option.
+        - `None` if the user quits the application.
+
+    Behavior:
+        - Press `ESC` or close the window to exit.
+        - Hover over buttons for more information.
+        - Click buttons to navigate to the selected functionality.
+
+    Dependencies:
+        - `pygame`: For rendering and user interaction.
+        - `boids.Utils.boids.Horde`: To render and simulate the boids in the background.
+
+    Example:
+        result = main()
+        if result == "display":
+            display()
+        elif result == "save2gif":
+            save2gif()
+
+    Notes:
+        - Ensure that required resources (fonts and images) are available:
+          - `Arial Rounded MT Bold` font for text rendering.
+          - `boids/Utils/GFX/settings_icon.png` and `boids/Utils/GFX/close_icon.png` for icons.
+
+    """
     # Initialize pygame window
     pygame.init()
     
